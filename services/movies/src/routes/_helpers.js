@@ -6,13 +6,14 @@ let ensureAuthenticated = (req, res, next) => {
   }
   const options = {
     method: 'GET',
-    uri: 'http://users-service:3000/users/user',
+    uri: 'http://users/users/user',
     json: true,
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${req.headers.authorization.split(' ')[1]}`,
     },
   };
+  console.log("hrm")
   return request(options)
   .then((response) => {
     req.user = response.user;

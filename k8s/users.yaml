@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: users
+  labels:
+    app: users
+spec:
+  ports:
+    - port: 80
+      targetPort: 3000
+      name: http
+  selector:
+    app: users
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users
+  labels:
+    app: users
+spec:
+  selector:
+    matchLabels:
+      app: users
+  template:
+    metadata:
+      labels:
+        app: users
+    spec:
+      containers:
+      - name: server
+        image: users
+        ports:
+        - containerPort: 3000
+          name: http
+        env:
+        - name: DATABASE_URL
+          value: postgres://postgres:postgres@users-db:5432/users_dev
+        - name: NODE_ENV
+          value: development
+        - name: TOKEN_SECRET
+          value: changeme

@@ -1,0 +1,4 @@
+package main
+
+func rateMovie(title string) int {
+}

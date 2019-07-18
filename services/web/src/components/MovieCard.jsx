@@ -6,6 +6,7 @@ const MovieCard = (props) => {
       <div className='panel panel-info'>
         <div className='panel-heading'>
           <h3 className='panel-title'>{props.title}</h3>
+          <div className='panel-rating'>{props.rating}% Match</div>
         </div>
         <div className='panel-body'>
           <img src={props.posterUrl} alt='Presentation' />

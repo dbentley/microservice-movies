@@ -5,7 +5,7 @@ import axios from 'axios'
 const API_URL = 'http://www.omdbapi.com/?apikey=c9328511&s='; // sample
 const USERS_SERVICE_URL = process.env.REACT_APP_USERS_SERVICE_URL;
 const MOVIES_SERVICE_URL = process.env.REACT_APP_MOVIES_SERVICE_URL;
-
+const RATINGS_SERVICE_URL = process.env.REACT_APP_RATINGS_SERVICE_URL;
 
 import './App.css';
 
@@ -22,10 +22,12 @@ class App extends Component {
     super(props)
     this.state = {
       movies: [],
+      ratings: {},
       saved: [],
       flashMessages: [],
       isAuthenticated: false
     }
+    this.tryLogin()
     this.searchMovie('land before time')
     this.registerUser = this.registerUser.bind(this)
     this.loginUser = this.loginUser.bind(this)
@@ -35,9 +37,45 @@ class App extends Component {
     this.saveMovie = this.saveMovie.bind(this)
     this.getMovies = this.getMovies.bind(this)
   }
+  tryLogin() {
+    const options = {
+      url: `${USERS_SERVICE_URL}/users/user`,
+      method: 'get',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${window.localStorage.authToken}`
+      }
+    };
+    return axios(options)
+      .then((res) => {
+        this.setState({ isAuthenticated: true });
+      })
+      .catch((err) => { console.log(err); })
+  }
   searchMovie(term) {
     axios.get(`${API_URL}${term}`)
-    .then((res) => { this.setState({ movies: res.data.Search }); })
+      .then((res) => {
+        this.setState({ movies: res.data.Search });
+        console.log(res.data.Search);
+        res.data.Search.forEach(m => {
+          axios.get(`${RATINGS_SERVICE_URL}/rating?title=` + encodeURIComponent(m.Title))
+            .then((res) => {
+              let ratings = {}
+              for (var k in this.state.ratings) {
+                ratings[k] = this.state.ratings[k];
+              }
+              ratings[m.Title] = res.data
+              this.setState({ratings: ratings})
+              console.log("yay " + res.data + typeof(res.data))
+            })
+            .catch((err) => { console.log(err); })
+
+        });
+        // for (movie of res.data.Search) {
+        //   console.log('hrm ' + movie.Title)
+        // }
+        // axios.get(`${RATING_URL}$
+      })
     .catch((err) => { console.log(err); })
   }
   createFlashMessage (text, type = 'success') {
@@ -63,7 +101,6 @@ class App extends Component {
   registerUser (userData, callback) {
     return axios.post(`${USERS_SERVICE_URL}/users/register`, userData)
     .then((res) => {
-      console.log("hrm " + res.data.token)
       window.localStorage.setItem('authToken', res.data.token)
       window.localStorage.setItem('user', res.data.user)
       this.setState({ isAuthenticated: true })
@@ -152,6 +189,7 @@ class App extends Component {
                   isAuthenticated={isAuthenticated}
                   getCurrentUser={this.getCurrentUser}
                   saveMovie={this.saveMovie}
+                  ratings={this.state.ratings}
                 />
               </div>
             : <Redirect to={{

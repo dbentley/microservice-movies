@@ -11,5 +11,10 @@ ENV PATH /usr/src/node_modules/.bin:$PATH
 ADD package.json /usr/src/package.json
 RUN npm install
 
+ADD . /usr/src/app
+
+RUN chmod +x /usr/src/app/entrypoint.sh
 # start app
-CMD ["npm", "start"]
+
+
+CMD ["/usr/src/app/entrypoint.sh"]

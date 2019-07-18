@@ -10,6 +10,7 @@ const MovieList = (props) => {
           title={movie.Title}
           posterUrl={movie.Poster}
           saveMovie={props.saveMovie}
+          rating={props.ratings[movie.Title] || "?"}
         />
       ))}
     </div>

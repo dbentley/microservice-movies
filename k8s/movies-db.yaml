@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: movies-db
+  labels:
+    app: movies-db
+spec:
+  ports:
+    - port: 5432
+      targetPort: 5432
+      name: db
+  selector:
+    app: movies-db
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: movies-db
+  labels:
+    app: movies-db
+spec:
+  selector:
+    matchLabels:
+      app: movies-db
+  template:
+    metadata:
+      labels:
+        app: movies-db
+    spec:
+      containers:
+      - name: db
+        image: movies-db
+        ports:
+        - containerPort: 5432
+          name: db
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: movies-db-external
+spec:
+  type: LoadBalancer
+  selector:
+    app: movies-db
+  ports:
+  - name: postgres
+    port: 5432
+    targetPort: 5432
