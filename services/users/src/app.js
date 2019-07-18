@@ -36,6 +36,6 @@ app.use((err, req, res, next) => {
     message: err,
   });
 });
-/* eslint-enable no-unused-vars */
+// eslint-enable no-unused-vars
 
 module.exports = app;

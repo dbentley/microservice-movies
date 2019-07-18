@@ -32,8 +32,11 @@ function onListening() {
   const addr = server.address();
   const bind = typeof addr === 'string' ? `Pipe ${port}` : `Port ${port}`;
   debug(`Listening on ${bind}`);
+  console.error(`hrm2 ${bind}`)
 }
 
+// hrm
+console.error("hrm")
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);

@@ -5,6 +5,7 @@ const authHelpers = require('../auth/_helpers');
 const router = express.Router();
 
 router.get('/ping', (req, res) => {
+  console.error("eep2");
   res.send('pong');
 });
 
